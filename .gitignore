@@ -4,6 +4,8 @@ config/
 /config/*
 .env
 
+.claude/pics/
+
 # logs
 logs
 *.log

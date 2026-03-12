@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/Users/computer/Desktop/ALL2/PROJECTS/CODING_PROJECTS/BOTS/DISCORD/discord-bot-openai-js/*.* 2>/dev/null | grep -v node_modules)"
+    ]
+  }
+}
