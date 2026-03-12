@@ -1,12 +1,10 @@
-import CONFIG from "../config/config.js";
+import { TYPING_INTERVAL } from "./config.js";
 
-export const fixUsername = async (username) => {
+export const fixUsername = (username) => {
   return username.replace(/\s+/g, "_").replace(/[^\w\s]/gi, "");
 };
 
 export const startTyping = (channel) => {
-  const { TYPING_INTERVAL } = CONFIG;
-
   channel.sendTyping();
   return setInterval(() => {
     channel.sendTyping();
@@ -18,7 +16,7 @@ export const stopTyping = (typingInterval) => {
 };
 
 //returns array
-export const defineSystemPrompt = async () => {
+export const defineSystemPrompt = () => {
   const systemPrompt = [
     {
       role: "system",

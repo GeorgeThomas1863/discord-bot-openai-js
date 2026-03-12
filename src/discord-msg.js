@@ -1,4 +1,4 @@
-import CONFIG from "../config/config.js";
+import { CHANNELS, PREFIX, CHUNK_SIZE_LIMIT } from "./config.js";
 import { sendToOpenAI } from "./api.js";
 import { startTyping, stopTyping, fixUsername, defineSystemPrompt } from "./util.js";
 
@@ -35,8 +35,6 @@ export const handleMessage = async (msgObj, client) => {
 
 export const checkMsgIgnore = async (msgObj, client) => {
   const { content, channelId, mentions } = msgObj;
-  const { CHANNELS, PREFIX } = CONFIG;
-
   // if (author.bot) return null;
   if (!CHANNELS.includes(channelId)) return null;
 
@@ -48,10 +46,8 @@ export const checkMsgIgnore = async (msgObj, client) => {
 };
 
 export const buildConvoArray = async (channel, client) => {
-  const { PREFIX } = CONFIG;
-
   //set system prompt as first msg in array
-  const convoArray = await defineSystemPrompt();
+  const convoArray = defineSystemPrompt();
 
   const prevMessages = await channel.messages.fetch({ limit: 10 });
   const messagesArray = Array.from(prevMessages.values()).reverse();
@@ -66,7 +62,7 @@ export const buildConvoArray = async (channel, client) => {
 
     if (author.id !== client.user.id && !content.startsWith(PREFIX)) continue;
 
-    const username = await fixUsername(author.username);
+    const username = fixUsername(author.username);
     const role = author.id === client.user.id ? "assistant" : "user";
     const convoObj = {
       role: role,
@@ -83,8 +79,6 @@ export const buildConvoArray = async (channel, client) => {
 //chunks the message into 2000 character chunks
 // export const sendDiscordMessage = async (message, inputObj) => {
 export const sendDiscordMessage = async (aiMessage, msgObj) => {
-  const { CHUNK_SIZE_LIMIT } = CONFIG;
-
   for (let i = 0; i < aiMessage.length; i += CHUNK_SIZE_LIMIT) {
     const chunk = aiMessage.substring(i, i + CHUNK_SIZE_LIMIT);
     await msgObj.reply(chunk);

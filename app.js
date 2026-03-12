@@ -1,12 +1,17 @@
-import { Client } from "discord.js";
-import { DISCORD_TOKEN } from "./config/bot.js";
+import { Client, GatewayIntentBits } from "discord.js";
+import { DISCORD_TOKEN } from "./src/config.js";
 import { handleMessage } from "./src/discord-msg.js";
 
 const client = new Client({
-  intents: ["Guilds", "GuildMembers", "GuildMessages", "MessageContent"],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
-client.on("clientReady", () => {
+client.once("ready", () => {
   console.log(`${client.user.tag} is now online!`);
 });
 

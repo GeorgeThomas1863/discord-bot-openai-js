@@ -1,5 +1,5 @@
 import { OpenAI } from "openai";
-import { OPENAI_KEY } from "../config/bot.js";
+import { OPENAI_KEY, MODEL } from "./config.js";
 
 const openai = new OpenAI({
   apiKey: OPENAI_KEY,
@@ -8,7 +8,7 @@ const openai = new OpenAI({
 //returns message string
 export const sendToOpenAI = async (inputArray) => {
   const params = {
-    model: "gpt-4",
+    model: MODEL,
     messages: inputArray,
   };
 
