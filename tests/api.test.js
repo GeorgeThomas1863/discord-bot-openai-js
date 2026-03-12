@@ -1,22 +1,25 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-const mockCreate = vi.fn();
+const { mockCreate } = vi.hoisted(() => ({ mockCreate: vi.fn() }));
 
 vi.mock('openai', () => ({
-  OpenAI: vi.fn().mockImplementation(() => ({
-    chat: { completions: { create: mockCreate } },
-  })),
-}));
-
-vi.mock('../src/config.js', () => ({
-  OPENAI_KEY: 'test-key',
-  MODEL: 'gpt-5.4',
+  OpenAI: class {
+    constructor() {
+      this.chat = { completions: { create: mockCreate } };
+    }
+  },
 }));
 
 import { sendToOpenAI } from '../src/api.js';
 
 describe('sendToOpenAI', () => {
-  beforeEach(() => mockCreate.mockReset());
+  beforeEach(() => {
+    mockCreate.mockReset();
+    vi.stubEnv('OPENAI_KEY', 'test-key');
+    vi.stubEnv('MODEL', 'gpt-5.4');
+  });
+
+  afterEach(() => vi.unstubAllEnvs());
 
   it('returns the message content string on success', async () => {
     mockCreate.mockResolvedValue({

@@ -1,11 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-
-vi.mock('../src/config.js', () => ({
-  CHANNELS: ['111', '222'],
-  PREFIX: '!',
-  CHUNK_SIZE_LIMIT: 2000,
-  TYPING_INTERVAL: 5000,
-}));
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('../src/api.js', () => ({ sendToOpenAI: vi.fn() }));
 
@@ -13,7 +6,7 @@ vi.mock('../src/util.js', () => ({
   startTyping: vi.fn().mockReturnValue(42),
   stopTyping: vi.fn(),
   fixUsername: vi.fn((u) => u.replace(/\s+/g, '_').replace(/[^\w]/g, '')),
-  defineSystemPrompt: vi.fn().mockReturnValue([{ role: 'system', content: 'You are helpful.' }]),
+  defineSystemPrompt: vi.fn().mockImplementation(() => [{ role: 'system', content: 'You are helpful.' }]),
 }));
 
 import { checkMsgIgnore, sendDiscordMessage, buildConvoArray } from '../src/discord-msg.js';
@@ -32,6 +25,14 @@ const makeMsgObj = (overrides = {}) => ({
 const fakeClient = { user: { id: 'bot-id' } };
 
 describe('checkMsgIgnore', () => {
+  beforeEach(() => {
+    vi.stubEnv('CHANNELS', JSON.stringify(['123456789']));
+    vi.stubEnv('PREFIX', '!');
+    vi.stubEnv('CHUNK_SIZE_LIMIT', '2000');
+  });
+
+  afterEach(() => vi.unstubAllEnvs());
+
   it('returns null when channelId is not in CHANNELS', async () => {
     const msg = makeMsgObj({ channelId: '999' });
     const result = await checkMsgIgnore(msg, fakeClient);
@@ -39,18 +40,21 @@ describe('checkMsgIgnore', () => {
   });
 
   it('returns null when content has no prefix and bot is not mentioned', async () => {
+    vi.stubEnv('CHANNELS', JSON.stringify(['111']));
     const msg = makeMsgObj({ content: 'hello there' });
     const result = await checkMsgIgnore(msg, fakeClient);
     expect(result).toBeNull();
   });
 
   it('returns true when content starts with the prefix', async () => {
+    vi.stubEnv('CHANNELS', JSON.stringify(['111']));
     const msg = makeMsgObj({ content: '!ping' });
     const result = await checkMsgIgnore(msg, fakeClient);
     expect(result).toBe(true);
   });
 
   it('returns true when bot is @mentioned even without prefix', async () => {
+    vi.stubEnv('CHANNELS', JSON.stringify(['111']));
     const msg = makeMsgObj({
       content: 'hey bot what is up',
       mentions: { users: { has: vi.fn().mockReturnValue(true) } },
@@ -67,6 +71,14 @@ describe('checkMsgIgnore', () => {
 const makeReplyObj = () => ({ reply: vi.fn().mockResolvedValue(undefined) });
 
 describe('sendDiscordMessage', () => {
+  beforeEach(() => {
+    vi.stubEnv('CHANNELS', JSON.stringify(['123456789']));
+    vi.stubEnv('PREFIX', '!');
+    vi.stubEnv('CHUNK_SIZE_LIMIT', '2000');
+  });
+
+  afterEach(() => vi.unstubAllEnvs());
+
   it('calls reply once for a short message (< 2000 chars)', async () => {
     const msgObj = makeReplyObj();
     const message = 'Hello, world!';
@@ -121,6 +133,14 @@ const makeChannel = (messages) => ({
 });
 
 describe('buildConvoArray', () => {
+  beforeEach(() => {
+    vi.stubEnv('CHANNELS', JSON.stringify(['123456789']));
+    vi.stubEnv('PREFIX', '!');
+    vi.stubEnv('CHUNK_SIZE_LIMIT', '2000');
+  });
+
+  afterEach(() => vi.unstubAllEnvs());
+
   it('has system prompt as first element', async () => {
     const channel = makeChannel([]);
     const result = await buildConvoArray(channel, fakeBuildClient);

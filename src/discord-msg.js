@@ -1,4 +1,3 @@
-import { CHANNELS, PREFIX, CHUNK_SIZE_LIMIT } from "./config.js";
 import { sendToOpenAI } from "./api.js";
 import { startTyping, stopTyping, fixUsername, defineSystemPrompt } from "./util.js";
 
@@ -34,6 +33,8 @@ export const handleMessage = async (msgObj, client) => {
 };
 
 export const checkMsgIgnore = async (msgObj, client) => {
+  const CHANNELS = JSON.parse(process.env.CHANNELS ?? '[]');
+  const PREFIX = process.env.PREFIX ?? '!';
   const { content, channelId, mentions } = msgObj;
   // if (author.bot) return null;
   if (!CHANNELS.includes(channelId)) return null;
@@ -46,6 +47,7 @@ export const checkMsgIgnore = async (msgObj, client) => {
 };
 
 export const buildConvoArray = async (channel, client) => {
+  const PREFIX = process.env.PREFIX ?? '!';
   //set system prompt as first msg in array
   const convoArray = defineSystemPrompt();
 
@@ -79,6 +81,7 @@ export const buildConvoArray = async (channel, client) => {
 //chunks the message into 2000 character chunks
 // export const sendDiscordMessage = async (message, inputObj) => {
 export const sendDiscordMessage = async (aiMessage, msgObj) => {
+  const CHUNK_SIZE_LIMIT = parseInt(process.env.CHUNK_SIZE_LIMIT ?? '2000', 10);
   for (let i = 0; i < aiMessage.length; i += CHUNK_SIZE_LIMIT) {
     const chunk = aiMessage.substring(i, i + CHUNK_SIZE_LIMIT);
     await msgObj.reply(chunk);

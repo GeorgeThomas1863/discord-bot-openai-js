@@ -1,5 +1,5 @@
+import 'dotenv/config';
 import { Client, GatewayIntentBits } from "discord.js";
-import { DISCORD_TOKEN } from "./src/config.js";
 import { handleMessage } from "./src/discord-msg.js";
 
 const client = new Client({
@@ -17,4 +17,4 @@ client.once("ready", () => {
 
 client.on("messageCreate", (message) => handleMessage(message, client));
 
-client.login(DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN);

@@ -1,10 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-// Mock the config module so util.js can be imported without real env vars
-vi.mock('../src/config.js', () => ({
-  TYPING_INTERVAL: 3000,
-}));
-
 // Import after mock is registered
 const { fixUsername, defineSystemPrompt, startTyping, stopTyping } =
   await import('../src/util.js');
@@ -18,7 +13,7 @@ describe('fixUsername', () => {
   });
 
   it('replaces multiple consecutive spaces with a single underscore', () => {
-    expect(fixUsername('hello   world')).toBe('hello___world');
+    expect(fixUsername('hello   world')).toBe('hello_world');
   });
 
   it('strips special characters like !, @, #', () => {
@@ -67,10 +62,12 @@ describe('defineSystemPrompt', () => {
 describe('startTyping / stopTyping', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.stubEnv('TYPING_INTERVAL', '5000');
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.unstubAllEnvs();
   });
 
   it('calls channel.sendTyping() immediately when startTyping is called', () => {
@@ -92,8 +89,8 @@ describe('startTyping / stopTyping', () => {
     // Clear before any interval fires
     stopTyping(id);
 
-    // Advance time past TYPING_INTERVAL (mocked as 3000 ms)
-    vi.advanceTimersByTime(6000);
+    // Advance time past TYPING_INTERVAL (5000 ms)
+    vi.advanceTimersByTime(10000);
 
     // Only the initial synchronous call should have happened
     expect(channel.sendTyping).toHaveBeenCalledTimes(1);
@@ -103,7 +100,7 @@ describe('startTyping / stopTyping', () => {
     const channel = { sendTyping: vi.fn() };
     startTyping(channel);
 
-    vi.advanceTimersByTime(3000);
+    vi.advanceTimersByTime(5000);
 
     // 1 immediate + 1 after interval
     expect(channel.sendTyping).toHaveBeenCalledTimes(2);
