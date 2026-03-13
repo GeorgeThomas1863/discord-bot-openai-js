@@ -33,7 +33,7 @@ export const handleMessage = async (msgObj, client) => {
 };
 
 export const checkMsgIgnore = async (msgObj, client) => {
-  const CHANNELS = JSON.parse(process.env.CHANNELS ?? '[]');
+  const CHANNELS = (process.env.CHANNELS ?? '').split(',').map(s => s.trim()).filter(Boolean);
   const PREFIX = process.env.PREFIX ?? '!';
   const { content, channelId, mentions, author } = msgObj;
   if (author.bot) return null;
