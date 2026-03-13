@@ -16,6 +16,7 @@ import { checkMsgIgnore, sendDiscordMessage, buildConvoArray } from '../src/disc
 // ---------------------------------------------------------------------------
 
 const makeMsgObj = (overrides = {}) => ({
+  author: { id: 'user-id', bot: false },
   content: '!hello',
   channelId: '111',
   mentions: { users: { has: vi.fn().mockReturnValue(false) } },
@@ -26,7 +27,7 @@ const fakeClient = { user: { id: 'bot-id' } };
 
 describe('checkMsgIgnore', () => {
   beforeEach(() => {
-    vi.stubEnv('CHANNELS', JSON.stringify(['123456789']));
+    vi.stubEnv('CHANNELS', '123456789');
     vi.stubEnv('PREFIX', '!');
     vi.stubEnv('CHUNK_SIZE_LIMIT', '2000');
   });
@@ -40,21 +41,21 @@ describe('checkMsgIgnore', () => {
   });
 
   it('returns null when content has no prefix and bot is not mentioned', async () => {
-    vi.stubEnv('CHANNELS', JSON.stringify(['111']));
+    vi.stubEnv('CHANNELS', '111');
     const msg = makeMsgObj({ content: 'hello there' });
     const result = await checkMsgIgnore(msg, fakeClient);
     expect(result).toBeNull();
   });
 
   it('returns true when content starts with the prefix', async () => {
-    vi.stubEnv('CHANNELS', JSON.stringify(['111']));
+    vi.stubEnv('CHANNELS', '111');
     const msg = makeMsgObj({ content: '!ping' });
     const result = await checkMsgIgnore(msg, fakeClient);
     expect(result).toBe(true);
   });
 
   it('returns true when bot is @mentioned even without prefix', async () => {
-    vi.stubEnv('CHANNELS', JSON.stringify(['111']));
+    vi.stubEnv('CHANNELS', '111');
     const msg = makeMsgObj({
       content: 'hey bot what is up',
       mentions: { users: { has: vi.fn().mockReturnValue(true) } },
@@ -72,7 +73,7 @@ const makeReplyObj = () => ({ reply: vi.fn().mockResolvedValue(undefined) });
 
 describe('sendDiscordMessage', () => {
   beforeEach(() => {
-    vi.stubEnv('CHANNELS', JSON.stringify(['123456789']));
+    vi.stubEnv('CHANNELS', '123456789');
     vi.stubEnv('PREFIX', '!');
     vi.stubEnv('CHUNK_SIZE_LIMIT', '2000');
   });
@@ -134,7 +135,7 @@ const makeChannel = (messages) => ({
 
 describe('buildConvoArray', () => {
   beforeEach(() => {
-    vi.stubEnv('CHANNELS', JSON.stringify(['123456789']));
+    vi.stubEnv('CHANNELS', '123456789');
     vi.stubEnv('PREFIX', '!');
     vi.stubEnv('CHUNK_SIZE_LIMIT', '2000');
   });

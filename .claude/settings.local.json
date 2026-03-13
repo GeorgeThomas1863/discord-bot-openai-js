@@ -5,7 +5,8 @@
       "Bash(find \"C:\\\\Users\\\\computer\\\\Desktop\\\\ALL2\\\\PROJECTS\\\\CODING_PROJECTS\\\\BOTS\\\\DISCORD\\\\discord-bot-openai-js\" -maxdepth 2 -type f -name \"*.js\" -o -name \"*.json\" | grep -E \"\\\\.\\(js|json\\)$\" | sort)",
       "WebSearch",
       "Bash(cd \"C:\\\\Users\\\\computer\\\\Desktop\\\\ALL2\\\\PROJECTS\\\\CODING_PROJECTS\\\\BOTS\\\\DISCORD\\\\discord-bot-openai-js\" && rm src/config.js tests/config.test.js)",
-      "Bash(cd \"C:\\\\Users\\\\computer\\\\Desktop\\\\ALL2\\\\PROJECTS\\\\CODING_PROJECTS\\\\BOTS\\\\DISCORD\\\\discord-bot-openai-js\" && npm test 2>&1)"
+      "Bash(cd \"C:\\\\Users\\\\computer\\\\Desktop\\\\ALL2\\\\PROJECTS\\\\CODING_PROJECTS\\\\BOTS\\\\DISCORD\\\\discord-bot-openai-js\" && npm test 2>&1)",
+      "Bash(find /c/Users/computer/Desktop/ALL2/PROJECTS/CODING_PROJECTS/BOTS/DISCORD/discord-bot-openai-js -maxdepth 2 -name \"vitest.config.*\" -o -name \"vite.config.*\" 2>/dev/null | head -20)"
     ]
   }
 }
