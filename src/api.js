@@ -3,7 +3,7 @@ import { OpenAI } from "openai";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_KEY });
 
 export const sendToOpenAI = async (inputArray) => {
-  const model = process.env.MODEL ?? 'gpt-5.4';
+  const model = process.env.MODEL ?? 'gpt-4o';
   const params = { model, messages: inputArray };
 
   try {
