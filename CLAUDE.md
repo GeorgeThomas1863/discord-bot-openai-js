@@ -65,7 +65,7 @@ Required default export from `config/config.js`:
 
 ## Gotchas
 
-- Uses **discord.js v13** (not v14) — the event name is `"clientReady"`, not `"ready"`
+- Uses **discord.js v13** (not v14) — the ready event name is `"ready"` (v13 internally calls it `CLIENT_READY` but emits the string `"ready"`, NOT `"clientReady"`)
 - Package is `"type": "module"` — all files use ESM (`import`/`export`), not CommonJS
 - The `config/` directory is gitignored and must be set up manually via `setup-config.sh`
 - OpenAI SDK is v5 — API surface differs from v3/v4 (uses `openai.chat.completions.create`)

@@ -6,6 +6,7 @@ export const handleMessage = async (msgObj, client) => {
 
   // console.log("MESSAGE OBJ");
   // console.log(msgObj);
+  console.log(`[handleMessage] received: author=${msgObj.author?.tag} channelId=${msgObj.channelId} content="${msgObj.content}"`);
 
   const msgIgnore = await checkMsgIgnore(msgObj, client);
   if (!msgIgnore) return null;
@@ -33,16 +34,24 @@ export const handleMessage = async (msgObj, client) => {
 };
 
 export const checkMsgIgnore = async (msgObj, client) => {
-  const CHANNELS = (process.env.CHANNELS ?? '').split(',').map(s => s.trim()).filter(Boolean);
+  const CHANNELS = Object.keys(process.env)
+    .filter(k => /^CHANNEL_\d+$/.test(k))
+    .map(k => (process.env[k] ?? '').trim())
+    .filter(Boolean);
   const PREFIX = process.env.PREFIX ?? '!';
   const { content, channelId, mentions, author } = msgObj;
-  if (author.bot) return null;
-  if (!CHANNELS.includes(channelId)) return null;
+
+  console.log(`[checkMsgIgnore] author=${author.tag} bot=${author.bot} channelId=${channelId} content="${content}"`);
+  console.log(`[checkMsgIgnore] CHANNELS (${CHANNELS.length}):`, CHANNELS);
+
+  if (author.bot) { console.log("[checkMsgIgnore] DROPPED: author is bot"); return null; }
+  if (!CHANNELS.includes(channelId)) { console.log("[checkMsgIgnore] DROPPED: channel not whitelisted"); return null; }
 
   const firstChar = content.trim().charAt(0);
   const botMention = mentions.users.has(client.user.id) || null;
-  if (firstChar !== PREFIX && !botMention) return null;
+  if (firstChar !== PREFIX && !botMention) { console.log(`[checkMsgIgnore] DROPPED: no prefix (got '${firstChar}', need '${PREFIX}') and no mention`); return null; }
 
+  console.log("[checkMsgIgnore] PASS — processing message");
   return true;
 };
 
