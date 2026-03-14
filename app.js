@@ -1,3 +1,5 @@
+//keep testing
+
 import 'dotenv/config';
 import { Client, GatewayIntentBits } from "discord.js";
 import { handleMessage } from "./src/discord-msg.js";
